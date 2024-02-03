@@ -1,7 +1,6 @@
 import pygame
 import player
 
-#test
 pygame.init()
 
 screenWidth = 1280
