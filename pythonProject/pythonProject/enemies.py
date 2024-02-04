@@ -1,5 +1,5 @@
 import pygame
 
-class Enemie(pygame.sprite.Sprite):
+class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()

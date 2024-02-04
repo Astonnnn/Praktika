@@ -1,5 +1,5 @@
 import pygame
-import player
+from player import *
 
 pygame.init()
 
@@ -13,68 +13,22 @@ floor = pygame.image.load("pildid/floor1.png")
 floor = pygame.transform.scale(floor, (1280, 380))
 background = pygame.image.load('pildid\scene.jpg')
 
-walkRight = []
-walkLeft = []
-for i in range(1, 17):
-    walkRight += [pygame.image.load('pildid\Run\cuphead_run_' + str(i) + '.png')]
-for i in range(1, 17):
-    walkLeft += [pygame.transform.flip(pygame.image.load('pildid\Run\cuphead_run_' + str(i) + '.png'), True, False)]
+
+character = Player(500, 500, 130, 150)
 
 background = pygame.image.load('pildid\scene.jpg')
 background = pygame.transform.scale(background, (screenWidth, screenHeight))
 
-
-idle = []
-for i in range(1, 6):
-    idle += [pygame.image.load('pildid\Idle\cuphead_idle_' + str(i) + '.png')]
-for i in range(4, 0, -1):
-    idle += [pygame.image.load('pildid\Idle\cuphead_idle_' + str(i) + '.png')]
-
-print(idle)
-
-
-x = 500
-y = 500
-width = 130
-height = 150
-vel = 10
-
-isJump = False
-jumpCount = 10
-left = False
-right = False
-walkCount = 0
-idleCount = 0
-
-
-
-#siin kõik ekraanile kuvatav
+# siin kõik ekraanile kuvatav
 
 def GameWindow():
-    global walkCount
-    global idleCount
     screen.blit(background, (0, 0))
     screen.blit(floor, (0, 360))
-
-    if walkCount + 1 >= 48:
-        walkCount = 0
-
-    if idleCount + 1 >= 27:
-        idleCount = 0
-
-    if left:
-        screen.blit(walkLeft[walkCount//3], (x,y))
-        walkCount += 1
-    elif right:
-        screen.blit(walkRight[walkCount//3], (x,y))
-        walkCount += 1
-    else:
-        screen.blit(idle[idleCount//3], (x,y))
-        idleCount += 1
+    character.draw(screen)
     pygame.display.update()
 
 
-#peaprogramm
+# peaprogramm
 
 run = True
 while run:
@@ -83,38 +37,36 @@ while run:
         if event.type == pygame.QUIT:
             run = False
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and x > vel:
-        x -= vel
-        left = True
-        right = False
-        idleCount = 0
-    elif keys[pygame.K_RIGHT] and x < screenWidth - width:
-        x += vel
-        right = True
-        left = False
-        idleCount = 0
+    if keys[pygame.K_LEFT] and character.x > character.vel:
+        character.x -= character.vel
+        character.left = True
+        character.right = False
+        character.idleCount = 0
+        character.standing = False
+    elif keys[pygame.K_RIGHT] and character.x < screenWidth - character.width:
+        character.x += character.vel
+        character.right = True
+        character.left = False
+        character.idleCount = 0
+        character.standing = False
     else:
-        right = False
-        left = False
-        walkCount = 0
-    if not isJump:
+        character.walkCount = 0
+        character.standing = True
+    if not character.isJump:
         if keys[pygame.K_SPACE]:
-            isJump = True
-            right = False
-            left = False
-            walkCount = 0
-            idleCount = 0
+            character.isJump = True
+            character.walkCount = 0
+            character.idleCount = 0
     else:
-        if jumpCount >= -10:
+        if character.jumpCount >= -10:
             neg = 1
-            if jumpCount < 0:
+            if character.jumpCount < 0:
                 neg = -1
-            y -= (jumpCount ** 2) * 0.6 * neg
-            jumpCount -= 1
+            character.y -= (character.jumpCount ** 2) * 0.6 * neg
+            character.jumpCount -= 1
         else:
-            isJump = False
-            jumpCount = 10
-
+            character.isJump = False
+            character.jumpCount = 10
 
     GameWindow()
     clock.tick(48)
