@@ -1,5 +1,50 @@
 import pygame
 
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
+walkRight = []
+
+for i in range(1,6):
+    walkRight += [pygame.transform.scale(pygame.image.load("pildid\enemy\enemy" + str(i) + ".jpg"), (130, 150))]
+
+walkLeft = []
+for i in range(1,6):
+    walkLeft += [pygame.transform.flip(pygame.transform.scale(pygame.image.load("pildid\enemy\enemy" + str(i) + ".jpg"), (130, 150)), True, False)]
+class Enemy(object):
+    def __init__(self, x, y, width, height, end):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height= height
+        self.end = end
+        self.path = [self.x, self.end]
+        self.walkCount = 0
+        self.vel = 3
+
+    def draw(self, window):
+        self.move()
+        if self.walkCount + 1 >= 15:
+            self.walkCount = 0
+
+        if self.vel > 0:
+            window.blit(walkRight[self.walkCount // 3], (self.x, self.y))
+            self.walkCount += 1
+        else:
+            window.blit(walkLeft[self.walkCount // 3], (self.x, self.y))
+            self.walkCount += 1
+
+
+
+    def move(self):
+        if self.vel > 0:
+            if self.x + self.vel < self.path[1]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.walkCount = 0
+        else:
+            if self.x - self.vel > self.path[0]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.walkCount = 0
+
+

@@ -1,6 +1,7 @@
 import pygame
 from player import *
 from projectile import *
+from enemies import *
 
 pygame.init()
 
@@ -28,12 +29,15 @@ def GameWindow():
     screen.blit(floor, (0, 360))
     for bullet in bullets:
         bullet.draw(screen)
+
     character.draw(screen)
+    enemy.draw(screen)
     pygame.display.update()
 
 
 character = Player(500, 500, 130, 150)
 bullets = []
+enemy = Enemy(400, 500, 130, 150, 850)
 
 # peaprogramm
 
@@ -45,7 +49,7 @@ while run:
             run = False
 
     for bullet in bullets:
-        if 1280 > bullet.x > 0:
+        if screenWidth > bullet.x > 0:
             bullet.x += bullet.vel
         else:
             bullets.pop(bullets.index(bullet))
