@@ -34,6 +34,8 @@ class Player(object):
         self.walkCount = 0
         self.idleCount = 0
         self.standing = True
+        self.hitbox = (self.x, self.y, 130, 150)
+
 
     def draw(self, window):
 
@@ -57,3 +59,5 @@ class Player(object):
             else:
                 window.blit(idleLeft[self.idleCount // 3], (self.x, self.y))
                 self.idleCount += 1
+        self.hitbox = (self.x, self.y, 130, 150)
+        #pygame.draw.rect(window, (255,0,0), self.hitbox, 2)
