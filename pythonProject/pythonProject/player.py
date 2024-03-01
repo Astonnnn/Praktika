@@ -63,6 +63,8 @@ class Player(object):
         #pygame.draw.rect(window, (255,0,0), self.hitbox, 2)
 
     def hit(self, window):
+        self.isJump = False
+        self.jumpCount = 10
         self.x = 200
         self.y = 500
         self.walkCount = 0
@@ -72,10 +74,10 @@ class Player(object):
         window.blit(text, (1280/2 - (text.get_width()/2), 720/2 - (text.get_height()/2)))
         pygame.display.update()
         i = 0
-        while i < 100:
+        while i < 50:
             pygame.time.delay(10)
             i += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    i = 101
+                    i = 51
                     pygame.quit()
