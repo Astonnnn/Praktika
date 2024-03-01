@@ -61,3 +61,21 @@ class Player(object):
                 self.idleCount += 1
         self.hitbox = (self.x, self.y, 130, 150)
         #pygame.draw.rect(window, (255,0,0), self.hitbox, 2)
+
+    def hit(self, window):
+        self.x = 200
+        self.y = 500
+        self.walkCount = 0
+        self.idleCount = 0
+        font1 = pygame.font.SysFont('comicsans',100)
+        text = font1.render('-5', 1, (255,255,255))
+        window.blit(text, (1280/2 - (text.get_width()/2), 720/2 - (text.get_height()/2)))
+        pygame.display.update()
+        i = 0
+        while i < 100:
+            pygame.time.delay(10)
+            i += 1
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    i = 101
+                    pygame.quit()

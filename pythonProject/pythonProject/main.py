@@ -11,23 +11,33 @@ screenHeight = 720
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption("NIMI")
 clock = pygame.time.Clock()
-floor = pygame.image.load("pildid/floor1.png")
-floor = pygame.transform.scale(floor, (1280, 380))
-background = pygame.image.load('pildid\scene.jpg')
+#floor = pygame.image.load("pildid/floor1.png")
+#floor = pygame.transform.scale(floor, (1280, 380))
+background = pygame.image.load('pildid\Background.jpeg')
+
+
+#heli
+
+bulletSound = pygame.mixer.Sound("pildid\soundEffects\Fireball.mp3")
+hitSound = ""
+
+music = pygame.mixer.music.load("pildid\soundEffects\BackgroundMusic.mp3")
+pygame.mixer.music.play(-1)
 
 
 
-
-background = pygame.image.load('pildid\scene.jpg')
+#background = pygame.image.load('pildid\scene.jpg')
 background = pygame.transform.scale(background, (screenWidth, screenHeight))
+
+
+
 
 # siin kõik ekraanile kuvatav
 
-
 def GameWindow():
     screen.blit(background, (0, 0))
-    screen.blit(floor, (0, 360))
-    text = font.render("Score: " + str(score), 1, (0,0,0))
+    #screen.blit(floor, (0, 360))
+    text = font.render("Score: " + str(score), 1, (255,255,255))
     screen.blit(text, (1000,10))
     for bullet in bullets:
         bullet.draw(screen)
@@ -38,7 +48,7 @@ def GameWindow():
 
 
 font = pygame.font.SysFont('comicsans', 45, True)
-character = Player(500, 500, 130, 150)
+character = Player(200, 500, 130, 150)
 bullets = []
 enemy = Enemy(400, 500, 130, 150, 850)
 shootloop = 0
@@ -48,6 +58,13 @@ score = 0
 
 run = True
 while run:
+
+    if character.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and character.hitbox[1] + character.hitbox[3] > enemy.hitbox[1]:
+        if character.hitbox[0] + character.hitbox[2] > enemy.hitbox[0] and character.hitbox[0] - character.hitbox[2] < enemy.hitbox[0] + enemy.hitbox[2]:
+            # hitSound.play()
+            character.hit(screen)
+            score -= 5
+
 
     if shootloop > 0:
         shootloop += 1
@@ -61,6 +78,7 @@ while run:
     for bullet in bullets:
         if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
             if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
+                #hitSound.play()
                 enemy.hit()
                 score += 1
                 bullets.pop(bullets.index(bullet))
@@ -73,6 +91,7 @@ while run:
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_z] and shootloop == 0:
+        bulletSound.play()
         if character.left:
             facing = -1
         else:
@@ -95,6 +114,8 @@ while run:
         character.left = False
         character.idleCount = 0
         character.standing = False
+
+
 
     else:
         character.walkCount = 0
