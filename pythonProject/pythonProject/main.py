@@ -12,10 +12,16 @@ screenHeight = 720
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption("NIMI")
 clock = pygame.time.Clock()
+
+#PILDID
+
 #floor = pygame.image.load("pildid/floor1.png")
 #floor = pygame.transform.scale(floor, (1280, 380))
 background = pygame.image.load('pildid\Background.jpeg')
 menuBackground = pygame.image.load('pildid\menuBackground.png')
+taust = pygame.image.load("pildid\Taust.png")
+taust = pygame.transform.scale(taust, (950,720))
+
 
 def get_font(size): # tagastab Press-Start-2P soovitud suuruses
     return pygame.font.Font("pildid/font.ttf", size)
@@ -62,88 +68,104 @@ def play():
 
     # peaprogramm
 
+    isPaused = False
     run = True
     while run:
-
-        if enemy.visible:
-            if character.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and character.hitbox[1] + character.hitbox[3] > enemy.hitbox[1]:
-                if character.hitbox[0] + character.hitbox[2] > enemy.hitbox[0] and character.hitbox[0] - character.hitbox[2] < enemy.hitbox[0] + enemy.hitbox[2]:
-                    # hitSound.play()
-                    character.hit(screen)
-                    score -= 5
-
-
-        if shootloop > 0:
-            shootloop += 1
-        if shootloop > 5:  #number muudab kuulide vahe suuremaks
-            shootloop = 0
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    isPaused = not isPaused
 
-        for bullet in bullets:
-            if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
-                if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
-                    #hitSound.play()
-                    enemy.hit()
-                    score += 1
+        if not isPaused:
+
+
+            if enemy.visible:
+                if character.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and character.hitbox[1] + character.hitbox[3] > enemy.hitbox[1]:
+                    if character.hitbox[0] + character.hitbox[2] > enemy.hitbox[0] and character.hitbox[0] - character.hitbox[2] < enemy.hitbox[0] + enemy.hitbox[2]:
+                        # hitSound.play()
+                        character.hit(screen)
+                        score -= 5
+
+
+            if shootloop > 0:
+                shootloop += 1
+            if shootloop > 5:  #number muudab kuulide vahe suuremaks
+                shootloop = 0
+
+
+
+            for bullet in bullets:
+                if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
+                    if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
+                        #hitSound.play()
+                        enemy.hit()
+                        score += 1
+                        bullets.pop(bullets.index(bullet))
+
+                if screenWidth > bullet.x > 0:
+                    bullet.x += bullet.vel
+                else:
                     bullets.pop(bullets.index(bullet))
 
-            if screenWidth > bullet.x > 0:
-                bullet.x += bullet.vel
-            else:
-                bullets.pop(bullets.index(bullet))
+            keys = pygame.key.get_pressed()
 
-        keys = pygame.key.get_pressed()
+            if keys[pygame.K_z] and shootloop == 0:
+                bulletSound.play()
+                if character.left:
+                    facing = -1
+                else:
+                    facing = 1
+                if len(bullets) < 16:
+                    bullets.append(Projectile(round(character.x + character.width // 2), round(character.y + character.height // 2), 8, (0, 0, 0), facing))
 
-        if keys[pygame.K_z] and shootloop == 0:
-            bulletSound.play()
-            if character.left:
-                facing = -1
-            else:
-                facing = 1
-            if len(bullets) < 16:
-                bullets.append(Projectile(round(character.x + character.width // 2), round(character.y + character.height // 2), 8, (0, 0, 0), facing))
+                shootloop = 1
 
-            shootloop = 1
-
-        if keys[pygame.K_LEFT] and character.x > character.vel:
-            character.x -= character.vel
-            character.left = True
-            character.right = False
-            character.idleCount = 0
-            character.standing = False
-
-        elif keys[pygame.K_RIGHT] and character.x < screenWidth - character.width:
-            character.x += character.vel
-            character.right = True
-            character.left = False
-            character.idleCount = 0
-            character.standing = False
-
-        else:
-            character.walkCount = 0
-            character.standing = True
-
-        if not character.isJump:
-            if keys[pygame.K_UP]:
-                character.isJump = True
-                character.walkCount = 0
+            if keys[pygame.K_LEFT] and character.x > character.vel:
+                character.x -= character.vel
+                character.left = True
+                character.right = False
                 character.idleCount = 0
-        else:
-            if character.jumpCount >= -10:
-                neg = 1
-                if character.jumpCount < 0:
-                    neg = -1
-                character.y -= (character.jumpCount ** 2) * 0.6 * neg
-                character.jumpCount -= 1
-            else:
-                character.isJump = False
-                character.jumpCount = 10
+                character.standing = False
 
-        GameWindow()
-        clock.tick(48)
+            elif keys[pygame.K_RIGHT] and character.x < screenWidth - character.width:
+                character.x += character.vel
+                character.right = True
+                character.left = False
+                character.idleCount = 0
+                character.standing = False
+
+            else:
+                character.walkCount = 0
+                character.standing = True
+
+            if not character.isJump:
+                if keys[pygame.K_UP]:
+                    character.isJump = True
+                    character.walkCount = 0
+                    character.idleCount = 0
+            else:
+                if character.jumpCount >= -10:
+                    neg = 1
+                    if character.jumpCount < 0:
+                        neg = -1
+                    character.y -= (character.jumpCount ** 2) * 0.6 * neg
+                    character.jumpCount -= 1
+                else:
+                    character.isJump = False
+                    character.jumpCount = 10
+
+            GameWindow()
+            clock.tick(48)
+
+        if isPaused:
+            screen.blit(taust, (150, 0))
+            pause_text = font.render("Paused", True, "black")
+            screen.blit(pause_text,
+                        ((screenWidth - pause_text.get_width()) // 2, (screenHeight - pause_text.get_height()) // 2))
+            pygame.display.flip()
 
 def options():
     pygame.display.set_caption("Options")
@@ -154,10 +176,11 @@ def options():
         optionsMousePosition = pygame.mouse.get_pos()
 
         screen.blit(menuBackground, (0, 0))
+        screen.blit(taust, (150,0))
 
-        OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
-        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
-        screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
+        #OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
+        #OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
+        #screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
         OPTIONS_BACK = Button(image=None, pos=(640, 460),
                               text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
