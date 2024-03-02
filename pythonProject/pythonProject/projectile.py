@@ -1,4 +1,7 @@
 import pygame
+kuul = pygame.image.load("pildid\projectile\kuul1.PNG")
+kuul = pygame.transform.scale(kuul, (60,39))
+
 
 class Projectile(object):
     def __init__(self, x, y, radius, color, facing):
@@ -10,5 +13,6 @@ class Projectile(object):
         self.vel = 12 * facing
 
     def draw(self, window):
-        pygame.draw.circle(window, self.color, (self.x, self.y), self.radius)
+        window.blit(kuul, (self.x, self.y))
+        #pygame.draw.circle(window, self.color, (self.x, self.y), self.radius)
 

@@ -146,10 +146,14 @@ def play():
         clock.tick(48)
 
 def options():
+    pygame.display.set_caption("Options")
+
     while True:
+
+
         optionsMousePosition = pygame.mouse.get_pos()
 
-        screen.fill("white")
+        screen.blit(menuBackground, (0, 0))
 
         OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
