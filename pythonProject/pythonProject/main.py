@@ -36,7 +36,6 @@ music = pygame.mixer.music.load("pildid\soundEffects\BackgroundMusic.mp3")
 pygame.mixer.music.play(-1)
 
 
-
 #background = pygame.image.load('pildid\scene.jpg')
 background = pygame.transform.scale(background, (screenWidth, screenHeight))
 
@@ -70,6 +69,7 @@ def play():
 
     isPaused = False
     run = True
+    character.right = True
     while run:
 
         for event in pygame.event.get():
@@ -90,6 +90,8 @@ def play():
                         score -= 5
 
 
+
+
             if shootloop > 0:
                 shootloop += 1
             if shootloop > 5:  #number muudab kuulide vahe suuremaks
@@ -101,9 +103,10 @@ def play():
                 if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
                     if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
                         #hitSound.play()
-                        enemy.hit()
-                        score += 1
-                        bullets.pop(bullets.index(bullet))
+                        if enemy.visible:
+                            enemy.hit()
+                            score += 1
+                            bullets.pop(bullets.index(bullet))
 
                 if screenWidth > bullet.x > 0:
                     bullet.x += bullet.vel
@@ -171,12 +174,11 @@ def options():
     pygame.display.set_caption("Options")
 
     while True:
-
-
         optionsMousePosition = pygame.mouse.get_pos()
 
         screen.blit(menuBackground, (0, 0))
         screen.blit(taust, (150,0))
+
 
         #OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
         #OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))

@@ -13,6 +13,10 @@ class Projectile(object):
         self.vel = 12 * facing
 
     def draw(self, window):
-        window.blit(kuul, (self.x, self.y))
+        if self.facing == 1:
+            window.blit(kuul, (self.x, self.y))
+        else:
+            window.blit(pygame.transform.flip(kuul,True,False), (self.x-130, self.y))
+
         #pygame.draw.circle(window, self.color, (self.x, self.y), self.radius)
 
