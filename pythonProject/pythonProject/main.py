@@ -3,6 +3,7 @@ from player import *
 from projectile import *
 from enemies import *
 from button import *
+from random import *
 
 pygame.init()
 
@@ -87,7 +88,9 @@ def play():
                 if event.key == pygame.K_ESCAPE:
                     isPaused = not isPaused
             if event.type == enemy_spawn_event and len(enemies) < number_of_enemies:
-                enemies.append(Enemy(400, 500, 130, 150, 850))
+                randomX = randint(130, 1150)
+                if not character.x + (character.width/2) > randomX > character.x - (character.width/2):
+                    enemies.append(Enemy(randomX, 500, 130, 150, (randomX + 450)))
                 time_counter = 0
 
         if not isPaused:
@@ -112,10 +115,8 @@ def play():
 
             for bullet in bullets:
                 for enemy in enemies:
-                    if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > \
-                            enemy.hitbox[1]:
-                        if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + \
-                                enemy.hitbox[2]:
+                    if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
+                        if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
                         # hitSound.play()
                             enemy.hit()
                             bullets.pop(bullets.index(bullet))
@@ -124,7 +125,7 @@ def play():
 
                 if screenWidth > bullet.x > 0:
                     bullet.x += bullet.vel
-                else:
+                if bullet.x > screenWidth:
                     bullets.pop(bullets.index(bullet))
 
             keys = pygame.key.get_pressed()

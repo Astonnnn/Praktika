@@ -71,7 +71,7 @@ class Player(object):
         self.walkCount = 0
         self.idleCount = 0
         font1 = pygame.font.SysFont('comicsans',100)
-        text = font1.render('-5', 1, (255,255,255))
+        text = font1.render('Health: -1', 1, (255,255,255))
         window.blit(text, (1280/2 - (text.get_width()/2), 720/2 - (text.get_height()/2)))
         pygame.display.update()
         i = 0
