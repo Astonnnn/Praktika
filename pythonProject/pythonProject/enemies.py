@@ -62,8 +62,5 @@ class Enemy(object):
     def hit(self):
         if self.health > 0:
             self.health -= 1
-        else:
-            self.visible = False
-        print('hit')
 
 

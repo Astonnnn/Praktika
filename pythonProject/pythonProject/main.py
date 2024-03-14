@@ -9,6 +9,7 @@ pygame.init()
 screenWidth = 1280
 screenHeight = 720
 
+clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption("NIMI")
 clock = pygame.time.Clock()
@@ -24,7 +25,7 @@ taust = pygame.image.load("pildid\Taust.png")
 taust = pygame.transform.scale(taust, (950, 720))
 
 
-def get_font(size):  # tagastab Press-Start-2P soovitud suuruses
+def get_font(size):  # tagastab soovitud suuruses
     return pygame.font.Font("pildid/font.ttf", size)
 
 
@@ -50,18 +51,26 @@ def play():
         # screen.blit(floor, (0, 360))
         text = font.render("Health: " + str(character.health), 1, (255, 255, 255))
         screen.blit(text, (1000, 10))
+
+        time_counter = clock.tick()
         for bullet in bullets:
             bullet.draw(screen)
 
         character.draw(screen)
-        enemy.draw(screen)
+        for i in enemies:
+            i.draw(screen)
         pygame.display.update()
+
+    milliseconds_delay = 3000
+    enemy_spawn_event = pygame.USEREVENT + 1
+    pygame.time.set_timer(enemy_spawn_event, milliseconds_delay)
 
     font = pygame.font.SysFont('comicsans', 45, True)
     character = Player(200, 500, 130, 150)
     bullets = []
-    enemy = Enemy(400, 500, 130, 150, 850)
+    enemies = [Enemy(400, 500, 130, 150, 850)]
     shootloop = 0
+    number_of_enemies = 3
 
 
     # peaprogramm
@@ -77,17 +86,18 @@ def play():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     isPaused = not isPaused
+            if event.type == enemy_spawn_event and len(enemies) < number_of_enemies:
+                enemies.append(Enemy(400, 500, 130, 150, 850))
+                time_counter = 0
 
         if not isPaused:
 
-            if enemy.visible:
-                if character.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and character.hitbox[1] + character.hitbox[
-                    3] > enemy.hitbox[1]:
-                    if character.hitbox[0] + character.hitbox[2] > enemy.hitbox[0] and character.hitbox[0] - \
-                            character.hitbox[2] < enemy.hitbox[0] + enemy.hitbox[2]:
-                        # hitSound.play()
-                        character.hit(screen)
-                        character.health -= 1
+            for enemy in enemies:
+                    if character.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and character.hitbox[1] + character.hitbox[3] > enemy.hitbox[1]:
+                        if character.hitbox[0] + character.hitbox[2] > enemy.hitbox[0] and character.hitbox[0] - character.hitbox[2] < enemy.hitbox[0] + enemy.hitbox[2]:
+                            # hitSound.play()
+                            character.hit(screen)
+                            character.health -= 1
 
 
             if character.health == 0:
@@ -101,14 +111,16 @@ def play():
                 shootloop = 0
 
             for bullet in bullets:
-                if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > \
-                        enemy.hitbox[1]:
-                    if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + \
-                            enemy.hitbox[2]:
+                for enemy in enemies:
+                    if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > \
+                            enemy.hitbox[1]:
+                        if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + \
+                                enemy.hitbox[2]:
                         # hitSound.play()
-                        if enemy.visible:
                             enemy.hit()
                             bullets.pop(bullets.index(bullet))
+                    if enemy.health == 0:
+                        enemies.pop(enemies.index(enemy))
 
                 if screenWidth > bullet.x > 0:
                     bullet.x += bullet.vel
@@ -165,6 +177,8 @@ def play():
 
             Gamewindow()
             clock.tick(48)
+            for bullet in bullets:
+                bullet.imageCount += 1
 
         if isPaused:
             screen.blit(taust, (150, 0))
@@ -200,6 +214,8 @@ def options():
                 if OPTIONS_BACK.checkForInput(optionsMousePosition):
                     main_menu()
                     break
+
+
 
         pygame.display.update()
 
@@ -242,7 +258,6 @@ def main_menu():
                 if QUIT_BUTTON.checkForInput(menuMousePosition):
                     pygame.quit()
                     break
-
 
 
         pygame.display.update()
