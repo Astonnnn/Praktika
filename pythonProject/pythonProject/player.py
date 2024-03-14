@@ -35,6 +35,7 @@ class Player(object):
         self.idleCount = 0
         self.standing = True
         self.hitbox = (self.x, self.y, 130, 150)
+        self.health = 3
 
 
     def draw(self, window):

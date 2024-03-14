@@ -13,21 +13,22 @@ screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption("NIMI")
 clock = pygame.time.Clock()
 
-#PILDID
+# PILDID
 
-#floor = pygame.image.load("pildid/floor1.png")
-#floor = pygame.transform.scale(floor, (1280, 380))
+# floor = pygame.image.load("pildid/floor1.png")
+# floor = pygame.transform.scale(floor, (1280, 380))
+
 background = pygame.image.load('pildid\Background.jpeg')
 menuBackground = pygame.image.load('pildid\menuBackground.png')
 taust = pygame.image.load("pildid\Taust.png")
-taust = pygame.transform.scale(taust, (950,720))
+taust = pygame.transform.scale(taust, (950, 720))
 
 
-def get_font(size): # tagastab Press-Start-2P soovitud suuruses
+def get_font(size):  # tagastab Press-Start-2P soovitud suuruses
     return pygame.font.Font("pildid/font.ttf", size)
 
 
-#heli
+# heli
 
 bulletSound = pygame.mixer.Sound("pildid\soundEffects\Fireball.mp3")
 hitSound = ""
@@ -35,8 +36,7 @@ hitSound = ""
 music = pygame.mixer.music.load("pildid\soundEffects\BackgroundMusic.mp3")
 pygame.mixer.music.play(-1)
 
-
-#background = pygame.image.load('pildid\scene.jpg')
+# background = pygame.image.load('pildid\scene.jpg')
 background = pygame.transform.scale(background, (screenWidth, screenHeight))
 
 
@@ -45,11 +45,11 @@ def play():
 
     # siin kõik ekraanile kuvatav
 
-    def GameWindow():
+    def Gamewindow():
         screen.blit(background, (0, 0))
-        #screen.blit(floor, (0, 360))
-        text = font.render("Score: " + str(score), 1, (255,255,255))
-        screen.blit(text, (1000,10))
+        # screen.blit(floor, (0, 360))
+        text = font.render("Health: " + str(character.health), 1, (255, 255, 255))
+        screen.blit(text, (1000, 10))
         for bullet in bullets:
             bullet.draw(screen)
 
@@ -57,13 +57,12 @@ def play():
         enemy.draw(screen)
         pygame.display.update()
 
-
     font = pygame.font.SysFont('comicsans', 45, True)
     character = Player(200, 500, 130, 150)
     bullets = []
     enemy = Enemy(400, 500, 130, 150, 850)
     shootloop = 0
-    score = 0
+
 
     # peaprogramm
 
@@ -81,31 +80,34 @@ def play():
 
         if not isPaused:
 
-
             if enemy.visible:
-                if character.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and character.hitbox[1] + character.hitbox[3] > enemy.hitbox[1]:
-                    if character.hitbox[0] + character.hitbox[2] > enemy.hitbox[0] and character.hitbox[0] - character.hitbox[2] < enemy.hitbox[0] + enemy.hitbox[2]:
+                if character.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and character.hitbox[1] + character.hitbox[
+                    3] > enemy.hitbox[1]:
+                    if character.hitbox[0] + character.hitbox[2] > enemy.hitbox[0] and character.hitbox[0] - \
+                            character.hitbox[2] < enemy.hitbox[0] + enemy.hitbox[2]:
                         # hitSound.play()
                         character.hit(screen)
-                        score -= 5
+                        character.health -= 1
 
 
+            if character.health == 0:
+                main_menu()
+                break
 
 
             if shootloop > 0:
                 shootloop += 1
-            if shootloop > 5:  #number muudab kuulide vahe suuremaks
+            if shootloop > 5:  # number muudab kuulide vahe suuremaks
                 shootloop = 0
 
-
-
             for bullet in bullets:
-                if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
-                    if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
-                        #hitSound.play()
+                if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > \
+                        enemy.hitbox[1]:
+                    if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + \
+                            enemy.hitbox[2]:
+                        # hitSound.play()
                         if enemy.visible:
                             enemy.hit()
-                            score += 1
                             bullets.pop(bullets.index(bullet))
 
                 if screenWidth > bullet.x > 0:
@@ -122,7 +124,8 @@ def play():
                 else:
                     facing = 1
                 if len(bullets) < 16:
-                    bullets.append(Projectile(round(character.x + character.width // 2), round(character.y + character.height // 2), 8, (0, 0, 0), facing))
+                    bullets.append(Projectile(round(character.x + character.width // 2),
+                                              round(character.y + character.height // 2), 8, (0, 0, 0), facing))
 
                 shootloop = 1
 
@@ -160,7 +163,7 @@ def play():
                     character.isJump = False
                     character.jumpCount = 10
 
-            GameWindow()
+            Gamewindow()
             clock.tick(48)
 
         if isPaused:
@@ -170,6 +173,7 @@ def play():
                         ((screenWidth - pause_text.get_width()) // 2, (screenHeight - pause_text.get_height()) // 2))
             pygame.display.flip()
 
+
 def options():
     pygame.display.set_caption("Options")
 
@@ -177,12 +181,11 @@ def options():
         optionsMousePosition = pygame.mouse.get_pos()
 
         screen.blit(menuBackground, (0, 0))
-        screen.blit(taust, (150,0))
+        screen.blit(taust, (150, 0))
 
-
-        #OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
-        #OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
-        #screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
+        # OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
+        # OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
+        # screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
         OPTIONS_BACK = Button(image=None, pos=(640, 460),
                               text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
@@ -196,8 +199,10 @@ def options():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(optionsMousePosition):
                     main_menu()
+                    break
 
         pygame.display.update()
+
 
 def main_menu():
     pygame.display.set_caption("Menu")
@@ -230,10 +235,14 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(menuMousePosition):
                     play()
+                    break
                 if OPTIONS_BUTTON.checkForInput(menuMousePosition):
                     options()
+                    break
                 if QUIT_BUTTON.checkForInput(menuMousePosition):
                     pygame.quit()
+                    break
+
 
 
         pygame.display.update()
