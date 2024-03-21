@@ -119,6 +119,7 @@ def play():
                         if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
                         # hitSound.play()
                             enemy.hit()
+                        if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2] or bullet.x > screenWidth:
                             bullets.pop(bullets.index(bullet))
                     if enemy.health == 0:
                         enemies.pop(enemies.index(enemy))
@@ -192,7 +193,8 @@ def play():
 def options():
     pygame.display.set_caption("Options")
 
-    while True:
+    run = True
+    while run:
         optionsMousePosition = pygame.mouse.get_pos()
 
         screen.blit(menuBackground, (0, 0))
@@ -210,9 +212,12 @@ def options():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                run = False
                 pygame.quit()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(optionsMousePosition):
+                    run = False
                     main_menu()
                     break
 
@@ -224,7 +229,9 @@ def options():
 def main_menu():
     pygame.display.set_caption("Menu")
 
-    while True:
+
+    run = True
+    while run:
         screen.blit(menuBackground, (0, 0))
 
         menuMousePosition = pygame.mouse.get_pos()
@@ -251,12 +258,15 @@ def main_menu():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(menuMousePosition):
+                    run = False
                     play()
                     break
                 if OPTIONS_BUTTON.checkForInput(menuMousePosition):
+                    run = False
                     options()
                     break
                 if QUIT_BUTTON.checkForInput(menuMousePosition):
+                    run = False
                     pygame.quit()
                     break
 
