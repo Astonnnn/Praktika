@@ -126,8 +126,6 @@ def play():
 
                 if screenWidth > bullet.x > 0:
                     bullet.x += bullet.vel
-                if bullet.x > screenWidth:
-                    bullets.pop(bullets.index(bullet))
 
             keys = pygame.key.get_pressed()
 
