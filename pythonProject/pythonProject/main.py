@@ -14,11 +14,9 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption("NIMI")
 
-# PILDID
 
-# floor = pygame.image.load("pildid/floor1.png")
-# floor = pygame.transform.scale(floor, (1280, 380))
 
+#PILDID
 background = pygame.image.load('pildid\Background.jpeg')
 menuBackground = pygame.image.load('pildid\menuBackground.png')
 taust = pygame.image.load("pildid\Taust.png")
@@ -42,8 +40,8 @@ background = pygame.transform.scale(background, (screenWidth, screenHeight))
 
 
 def play():
-    global character
     pygame.display.set_caption("Play")
+    dashlimiit = 1000
 
     # siin kõik ekraanile kuvatav
 
@@ -62,14 +60,14 @@ def play():
             i.draw(screen, character.x)
         pygame.display.update()
 
-    milliseconds_delay = 3000
+    milliseconds_delay = 5000
     enemy_spawn_event = pygame.USEREVENT + 1
     pygame.time.set_timer(enemy_spawn_event, milliseconds_delay)
 
     font = pygame.font.SysFont('comicsans', 45, True)
     character = Player(200, 500, 130, 150)
     bullets = []
-    enemies = [Enemy(400, 500, 90, 103)]
+    enemies = [Enemy(1300, 500, 90, 103)]
     shootloop = 0
     number_of_enemies = 3
 
@@ -80,6 +78,9 @@ def play():
     run = True
     character.right = True
     while run:
+        dashlimiit += 10
+
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -88,10 +89,8 @@ def play():
                 if event.key == pygame.K_ESCAPE:
                     isPaused = not isPaused
             if event.type == enemy_spawn_event and len(enemies) < number_of_enemies:
-                randomX = randint(130, 1150)
-                if not character.x + (character.width/2) > randomX > character.x - (character.width/2):
-                    enemies.append(Enemy(randomX, 500, 130, 150))
-                time_counter = 0
+                    enemies.append(Enemy(1300, 500, 130, 150))
+                    time_counter = 0
 
         if not isPaused:
 
@@ -128,6 +127,13 @@ def play():
                     bullet.x += bullet.vel
 
             keys = pygame.key.get_pressed()
+
+            if keys[pygame.K_x] and character.dashing == False and dashlimiit >= 1000:
+                if character.right:
+                    character.dash(1)
+                else:
+                    character.dash(-1)
+                dashlimiit = 0
 
             if keys[pygame.K_z] and shootloop == 0:
                 bulletSound.play()

@@ -36,6 +36,7 @@ class Player(object):
         self.standing = True
         self.hitbox = (self.x, self.y, 130, 150)
         self.health = 3
+        self.dashing = False
 
 
     def draw(self, window):
@@ -82,3 +83,6 @@ class Player(object):
                 if event.type == pygame.QUIT:
                     i = 51
                     pygame.quit()
+
+    def dash(self, facing):
+        self.x += 200 * facing
