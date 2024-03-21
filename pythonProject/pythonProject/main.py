@@ -1,7 +1,7 @@
 import pygame
 from player import *
 from projectile import *
-from enemies import *
+from enemies import Enemy
 from button import *
 from random import *
 
@@ -13,7 +13,6 @@ screenHeight = 720
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption("NIMI")
-clock = pygame.time.Clock()
 
 # PILDID
 
@@ -43,6 +42,7 @@ background = pygame.transform.scale(background, (screenWidth, screenHeight))
 
 
 def play():
+    global character
     pygame.display.set_caption("Play")
 
     # siin kõik ekraanile kuvatav
@@ -59,7 +59,7 @@ def play():
 
         character.draw(screen)
         for i in enemies:
-            i.draw(screen)
+            i.draw(screen, character.x)
         pygame.display.update()
 
     milliseconds_delay = 3000
@@ -69,7 +69,7 @@ def play():
     font = pygame.font.SysFont('comicsans', 45, True)
     character = Player(200, 500, 130, 150)
     bullets = []
-    enemies = [Enemy(400, 500, 130, 150, 850)]
+    enemies = [Enemy(400, 500, 90, 103)]
     shootloop = 0
     number_of_enemies = 3
 
@@ -90,7 +90,7 @@ def play():
             if event.type == enemy_spawn_event and len(enemies) < number_of_enemies:
                 randomX = randint(130, 1150)
                 if not character.x + (character.width/2) > randomX > character.x - (character.width/2):
-                    enemies.append(Enemy(randomX, 500, 130, 150, (randomX + 450)))
+                    enemies.append(Enemy(randomX, 500, 130, 150))
                 time_counter = 0
 
         if not isPaused:
@@ -110,7 +110,7 @@ def play():
 
             if shootloop > 0:
                 shootloop += 1
-            if shootloop > 5:  # number muudab kuulide vahe suuremaks
+            if shootloop > 8:  # number muudab kuulide vahe suuremaks
                 shootloop = 0
 
             for bullet in bullets:
@@ -169,7 +169,7 @@ def play():
                     neg = 1
                     if character.jumpCount < 0:
                         neg = -1
-                    character.y -= (character.jumpCount ** 2) * 0.6 * neg
+                    character.y -= (character.jumpCount ** 2) * 0.7 * neg
                     character.jumpCount -= 1
                 else:
                     character.isJump = False

@@ -9,22 +9,22 @@ for i in range(1,6):
 walkLeft = []
 for i in range(1,6):
     walkLeft += [pygame.transform.flip(pygame.transform.scale(pygame.image.load("pildid\enemy\enemy" + str(i) + ".jpg"), (130, 150)), True, False)]
-class Enemy(object):
-    def __init__(self, x, y, width, height, end):
+
+
+class Enemy:
+    def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
         self.width = width
         self.height= height
-        self.end = end
-        self.path = [self.x, self.end]
         self.walkCount = 0
         self.vel = 3
         self.hitbox = (self.x - 10, self.y, 130, 150)
         self.health = 20
         self.visible = True
 
-    def draw(self, window):
-        self.move()
+    def draw(self, window, characterx):
+        self.move(characterx)
         if self.visible:
             if self.walkCount + 1 >= 15:
                 self.walkCount = 0
@@ -39,21 +39,19 @@ class Enemy(object):
             pygame.draw.rect(window, (255, 0, 0), (self.hitbox[0] + 30, self.hitbox[1]-20, 100, 10))
             pygame.draw.rect(window, (0, 255, 0), (self.hitbox[0] + 30, self.hitbox[1]-20, 100 - ((100/20)*(20-self.health)), 10))
 
-            self.hitbox = (self.x - 10, self.y, 130, 150)
+            self.hitbox = (self.x - 10, self.y, 90, 103)
 
             #pygame.draw.rect(window, (255, 0, 0), self.hitbox, 2)
 
-
-
-    def move(self):
+    def move(self, target):
         if self.vel > 0:
-            if self.x + self.vel < self.path[1]:
+            if self.x < target:
                 self.x += self.vel
             else:
-                self.vel = self.vel * -1
+                self.x -= self.vel
                 self.walkCount = 0
         else:
-            if self.x - self.vel > self.path[0]:
+            if self.x - self.vel > self.x:
                 self.x += self.vel
             else:
                 self.vel = self.vel * -1
